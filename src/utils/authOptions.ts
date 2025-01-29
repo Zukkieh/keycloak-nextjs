@@ -1,9 +1,9 @@
 import { Claims } from '@/@types/jwt-claims';
-import { emptyJwt } from '@/utils/auth';
 import axios, { AxiosError } from 'axios';
 import { AuthOptions, TokenSet } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import KeycloakProvider from 'next-auth/providers/keycloak';
+import { emptyJwt } from './auth';
 
 const keycloak = KeycloakProvider({
   clientId: process.env.NEXTAUTH_KEYCLOAK_CLIENT_ID!,
@@ -51,7 +51,7 @@ export const authOptions: AuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/auth/signin',
+    signIn: undefined,
   },
   events: {
     signOut: ({ token }) => doFinalSignoutHandshake(token),
@@ -80,10 +80,12 @@ export const authOptions: AuthOptions = {
         return token
       } else {
         try {
+          if(!token.accessToken){
+            throw { error: 'invalid_grant', error_description: 'Invalid access token' }
+          }
           const response = await requestRefreshOfAccessToken(token)
 
           const tokens: TokenSet = await response.json()
-
           if (!response.ok) throw tokens
 
           const updatedToken: JWT = {
@@ -96,7 +98,8 @@ export const authOptions: AuthOptions = {
           return updatedToken
         } catch (error) {
           console.error("Error refreshing access token", error)
-          return { ...token, error: "RefreshAccessTokenError" }
+          doFinalSignoutHandshake(token);
+          return { ...emptyJwt, error: "RefreshAccessTokenError" }
         }
       }
     },

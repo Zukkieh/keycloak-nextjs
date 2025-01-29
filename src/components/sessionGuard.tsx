@@ -9,6 +9,7 @@ export default function SessionGuard({ children }: { children: ReactNode }) {
       signIn("keycloak");
     }
   }, [data]);
+  if(!data?.accessToken) return null;
 
   return <>{children}</>;
 }

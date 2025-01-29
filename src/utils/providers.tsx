@@ -19,9 +19,9 @@ export const metadata: Metadata = {
 
 
 export default function RootLayout({ children, session }: RootLayoutProps) {
-  console.log(session)
   return (
-    <SessionProvider session={session} refetchInterval={2 * 60}>
+    // In my case, just for test purposes, I defined the SSO Idle Session and Access Token Lifespan to be 2 minutes. So the refresh interval will be 1 minute
+    <SessionProvider session={session} refetchInterval={1 * 60}>
       {children}
     </SessionProvider>
   );
