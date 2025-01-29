@@ -16,4 +16,6 @@ export default function useAuthenticated(route?: string) {
       void router.push(route);
     }
   }, [data?.error, status, router, route]);
+
+  return data;
 }

@@ -20,9 +20,9 @@ export default function RootLayout({ children, session }: RootLayoutProps) {
     <html lang="pt-br" suppressHydrationWarning>
       <body>
         <Providers session={session}>
-          {/* <SessionGuard> */}
+          <SessionGuard>
             {children}
-          {/* </SessionGuard> */}
+          </SessionGuard>
         </Providers>
       </body>
     </html>
