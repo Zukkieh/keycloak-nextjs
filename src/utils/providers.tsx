@@ -1,10 +1,12 @@
-import SessionGuard from '@/components/sessionGuard';
-import Providers from '@/utils/providers';
+'use client';
+
 import type { Metadata } from 'next';
+import { SessionProvider } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 interface RootLayoutProps {
   children: React.ReactNode;
-  session: never;
+  session: Session;
 }
 
 export const metadata: Metadata = {
@@ -15,16 +17,12 @@ export const metadata: Metadata = {
   },
 };
 
+
 export default function RootLayout({ children, session }: RootLayoutProps) {
+  console.log(session)
   return (
-    <html lang="pt-br" suppressHydrationWarning>
-      <body>
-        <Providers session={session}>
-          <SessionGuard>
-            {children}
-          </SessionGuard>
-        </Providers>
-      </body>
-    </html>
+    <SessionProvider session={session} refetchInterval={2 * 60}>
+      {children}
+    </SessionProvider>
   );
 }
